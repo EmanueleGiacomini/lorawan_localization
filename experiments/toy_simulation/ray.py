@@ -44,7 +44,10 @@ class Ray:
                         min_obj = object
             min_t = min(min_t, target_t)
             # Compute intensity decay
-            intensity_decay = min(1., 1. / (min_t*1e-3)**2)
+            if min_t < 1e-4:
+                intensity_decay = 1.
+            else:
+                intensity_decay = min(1., 1. / (min_t*5e-3)**2)
             if min_obj is not None:
                 # Compute intersection angle
                 Ct_obj = np.dot(min_obj.s, self.r) / (np.linalg.norm(min_obj.s) * np.linalg.norm(self.r))
@@ -57,6 +60,7 @@ class Ray:
             # Move the ray
             self.p = self.p + min_t * self.r
             # Check if target is reached, else add 1e-3 towards self.r to avoid recasting to the same object
-            if (np.abs(self.p - target) < 1e-3).all():
+#            print(self.p, target, self.p - target, self.intensity, min_t)
+            if (np.abs(self.p - target) < 1e-3).all() or min_t < 1e-5:
                 return self.intensity
             self.p += 1e-3 * self.r
