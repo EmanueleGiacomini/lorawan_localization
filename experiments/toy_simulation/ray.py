@@ -5,10 +5,11 @@ import numpy as np
 from obstacle import SimObject
 
 class Ray:
-    def __init__(self, p: np.array, r: float, intensity: float=0.0):
+    def __init__(self, p: np.array, r: float, intensity: float=0.0, ff_attenuation=1e-2):
         self.p = p
         self.r = r
         self.intensity = intensity
+        self.ff_attenuation = ff_attenuation
 
     def cast(self, target: np.array, object_lst: [SimObject]):
         def checkIntersection(object: SimObject):
@@ -47,7 +48,7 @@ class Ray:
             if min_t < 1e-4:
                 intensity_decay = 1.
             else:
-                intensity_decay = min(1., 1. / (min_t*5e-3)**2)
+                intensity_decay = min(1., 1. / (min_t*self.ff_attenuation)**2)
             if min_obj is not None:
                 # Compute intersection angle
                 Ct_obj = np.dot(min_obj.s, self.r) / (np.linalg.norm(min_obj.s) * np.linalg.norm(self.r))

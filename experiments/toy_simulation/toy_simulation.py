@@ -5,6 +5,7 @@ import numpy as np
 from scipy.interpolate import griddata
 from matplotlib import pyplot as plt
 import matplotlib.patches as patches
+import time
 
 from ray import Ray
 from obstacle import Wall2D
@@ -72,6 +73,23 @@ if __name__ == '__main__':
     x = np.linspace(-1000, 1000, 40)
     y = np.linspace(-1000, 1000, 40)
     X, Y = np.meshgrid(x, y)
+
+    """
+    # Thanks to python GIL, parallelized version sucks A LOT >:(
+
+    print(f'Testing parallelized samplePoints')
+    start = time.time()
+    gate0.samplePoints(X, Y, object_lst, parallelize=True)
+    end = time.time()
+    print(f'Parallelized samplePoints: {end-start} s')
+    print(f'Testing sequential samplePoints')
+    start = time.time()
+    gate0.samplePoints(X, Y, object_lst, parallelize=False)
+    end = time.time()
+    print(f'Sequential samplePoints: {end-start} s')
+    exit(0)
+    """
+    
 
     def sampling_f(x, y):
         return gate0.samplePoints(x, y, object_lst)
